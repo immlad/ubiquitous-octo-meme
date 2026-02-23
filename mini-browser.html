@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini Browser</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      background: #111827;
+      color: #e5e7eb;
+      align-items: center;
+    }
+
+    #urlInput {
+      flex: 1;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    button {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button id="backBtn" disabled>←</button>
+    <button id="forwardBtn" disabled>→</button>
+    <input id="urlInput" placeholder="Enter URL or search..." />
+    <button id="goBtn">Go</button>
+  </header>
+
+  <iframe id="view"></iframe>
+
+  <script>
+    const urlInput = document.getElementById("urlInput");
+    const view = document.getElementById("view");
+    const backBtn = document.getElementById("backBtn");
+    const forwardBtn = document.getElementById("forwardBtn");
+    const goBtn = document.getElementById("goBtn");
+
+    const historyStack = [];
+    let historyIndex = -1;
+
+    function normalizeInput(input) {
+      input = input.trim();
+      if (!input) return null;
+
+      // If it looks like a URL without protocol, add https://
+      const hasProtocol = /^https?:\/\//i.test(input);
+      const looksLikeDomain = /\./.test(input) && !/\s/.test(input);
+
+      if (!hasProtocol && looksLikeDomain) {
+        return "https://" + input;
+      }
+
+      // Otherwise treat as search query
+      if (!hasProtocol && !looksLikeDomain) {
+        const q = encodeURIComponent(input);
+        return "https://www.google.com/search?q=" + q;
+      }
+
+      return input;
+    }
+
+    function navigate(rawInput, pushHistory = true) {
+      const url = normalizeInput(rawInput);
+      if (!url) return;
+
+      view.src = url;
+      urlInput.value = url;
+
+      if (pushHistory) {
+        // Trim forward history if we navigate fresh
+        historyStack.splice(historyIndex + 1);
+        historyStack.push(url);
+        historyIndex = historyStack.length - 1;
+      }
+
+      updateNavButtons();
+    }
+
+    function updateNavButtons() {
+      backBtn.disabled = historyIndex <= 0;
+      forwardBtn.disabled = historyIndex >= historyStack.length - 1;
+    }
+
+    backBtn.addEventListener("click", () => {
+      if (historyIndex > 0) {
+        historyIndex--;
+        const url = historyStack[historyIndex];
+        navigate(url, false);
+      }
+    });
+
+    forwardBtn.addEventListener("click", () => {
+      if (historyIndex < historyStack.length - 1) {
+        historyIndex++;
+        const url = historyStack[historyIndex];
+        navigate(url, false);
+      }
+    });
+
+    goBtn.addEventListener("click", () => navigate(urlInput.value));
+    urlInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") navigate(urlInput.value);
+    });
+
+    // Load a default page
+    navigate("https://example.com");
+  </script>
+</body>
+</html>
