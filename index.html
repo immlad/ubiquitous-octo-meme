@@ -815,8 +815,6 @@ function updateTabTitleFromTab(tab) {
 
 /* Browser navigation */
 function loadBrowserURL() {
-    console.log("loadBrowserURL fired");
-
     const input = document.getElementById("browserURL");
     const iframe = document.getElementById("browserFrame");
 
@@ -826,8 +824,11 @@ function loadBrowserURL() {
         url = "https://" + url;
     }
 
+    console.log("Loading:", "http://localhost:8080/proxy/" + url);
+
     iframe.src = "http://localhost:8080/proxy/" + url;
 }
+
 
 function browserBack() {
     try { document.getElementById("browserFrame").contentWindow.history.back(); } catch(e){}
