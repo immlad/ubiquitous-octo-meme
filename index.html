@@ -815,17 +815,17 @@ function updateTabTitleFromTab(tab) {
 
 /* Browser navigation */
 function loadBrowserURL() {
+    console.log("loadBrowserURL fired");
+
     const input = document.getElementById("browserURL");
     const iframe = document.getElementById("browserFrame");
 
     let url = input.value.trim();
 
-    // Auto-add https:// if missing
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
         url = "https://" + url;
     }
 
-    // Load through your CORS-bypass backend
     iframe.src = "http://localhost:8080/proxy/" + url;
 }
 
