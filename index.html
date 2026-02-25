@@ -509,8 +509,9 @@
 
 <script>
 <script>
+<script>
 /* ============================================================
-   WINDOW MANAGER (UNCHANGED)
+   WINDOW MANAGER (REQUIRED)
    ============================================================ */
 
 let zCounter = 10;
@@ -631,26 +632,20 @@ function dragEnd() {
 }
 
 /* ============================================================
-   FIXED + OPTIMIZED BROWSER LOGIC (REPLACEMENT SECTION)
+   FIXED BROWSER LOGIC (REPLACEMENT)
    ============================================================ */
 
 const SEARCH_BACKEND = "http://localhost:8080/proxy/";
 let browserTabs = [];
 let activeTabId = null;
 
-/* Create a new tab */
 function createTab(url = null) {
     const id = "tab_" + Date.now() + "_" + Math.floor(Math.random()*1000);
-    browserTabs.push({
-        id,
-        url,
-        title: url ? url : "New Tab"
-    });
+    browserTabs.push({ id, url, title: url ? url : "New Tab" });
     setActiveTab(id);
     renderTabs();
 }
 
-/* Switch active tab */
 function setActiveTab(id) {
     activeTabId = id;
     const tab = browserTabs.find(t => t.id === id);
@@ -682,7 +677,6 @@ function setActiveTab(id) {
     renderTabs();
 }
 
-/* Close tab */
 function closeTab(id, event) {
     if (event) event.stopPropagation();
     const idx = browserTabs.findIndex(t => t.id === id);
@@ -703,7 +697,6 @@ function closeTab(id, event) {
     }
 }
 
-/* Render tabs */
 function renderTabs() {
     const bar = document.getElementById("tabBar");
     bar.innerHTML = "";
@@ -733,7 +726,6 @@ function renderTabs() {
     bar.appendChild(addBtn);
 }
 
-/* Update tab title */
 function updateTabTitleFromURL(url) {
     const tab = browserTabs.find(t => t.id === activeTabId);
     if (!tab) return;
@@ -762,7 +754,6 @@ function updateTabTitleFromTab(tab) {
     }
 }
 
-/* Load URL */
 function loadBrowserURL() {
     const input = document.getElementById("browserURL");
     const iframe = document.getElementById("browserFrame");
@@ -779,12 +770,9 @@ function loadBrowserURL() {
     iframe.srcdoc = "";
     iframe.src = proxied;
 
-    iframe.onload = () => {
-        updateTabTitleFromURL(proxied);
-    };
+    iframe.onload = () => updateTabTitleFromURL(proxied);
 }
 
-/* Navigation */
 function browserBack() {
     try { document.getElementById("browserFrame").contentWindow.history.back(); } catch(e){}
 }
@@ -795,17 +783,11 @@ function browserForward() {
 
 function browserReload() {
     const frame = document.getElementById("browserFrame");
-    if (frame.contentWindow) {
-        frame.contentWindow.location.reload();
-    } else if (frame.src) {
-        frame.src = frame.src;
-    }
+    if (frame.contentWindow) frame.contentWindow.location.reload();
+    else if (frame.src) frame.src = frame.src;
 }
 
-/* Init */
-window.addEventListener("load", () => {
-    createTab(null);
-});
+window.addEventListener("load", () => createTab(null));
 </script>
 </body>
 </html>
