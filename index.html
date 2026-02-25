@@ -329,19 +329,6 @@
     animation: genieMinimize 0.35s ease-in forwards;
 }
 
-/* Prevent browser iframe from blocking desktop when empty */
-.browser-iframe[src=""],
-.browser-iframe:not([src]) {
-    pointer-events: none !important;
-    opacity: 0 !important;
-}
-
-/* Ensure windows stay above browser iframe */
-.app-window {
-    z-index: 10 !important;
-    position: relative;
-}
-
 .browser-iframe {
     z-index: 1 !important;
     position: relative;
@@ -418,7 +405,6 @@
             <button class="browser-btn" onclick="browserBack()">⟵</button>
             <button class="browser-btn" onclick="browserForward()">⟶</button>
             <button class="browser-btn" onclick="browserReload()">⟳</button>
-
             <input id="browserURL" class="browser-url"
                    placeholder="Search or enter URL"
                    onkeydown="if(event.key==='Enter'){loadBrowserURL();}">
