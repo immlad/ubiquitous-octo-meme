@@ -815,14 +815,18 @@ function updateTabTitleFromTab(tab) {
 
 /* Browser navigation */
 function loadBrowserURL() {
-    const raw = document.getElementById("browserURL").value || "";
-    const url = normalizeInput(raw);
-    if (!url) return;
-    showLoading();
-    updateTabTitleFromURL(url);
-    const frame = document.getElementById("browserFrame");
-    frame.srcdoc = "";
-    frame.src = url;
+    const input = document.getElementById("browserURL");
+    const iframe = document.getElementById("browserFrame");
+
+    let url = input.value.trim();
+
+    // Auto-add https:// if missing
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        url = "https://" + url;
+    }
+
+    // Load through your CORS-bypass backend
+    iframe.src = "http://localhost:8080/proxy/" + url;
 }
 
 function browserBack() {
