@@ -333,6 +333,19 @@
     z-index: 1 !important;
     position: relative;
 }
+        /* Browser iframe should be visible when a site is loaded */
+.browser-iframe {
+    pointer-events: auto;
+    opacity: 1;
+    z-index: 5;
+    position: relative;
+}
+
+/* Hide iframe ONLY when no URL is loaded */
+.browser-iframe:not([src]) {
+    opacity: 0;
+    pointer-events: none;
+}
     </style>
 </head>
 <body>
