@@ -664,19 +664,20 @@ function setActiveTab(id) {
     const urlInput = document.getElementById("browserURL");
     if (!tab) return;
 
-    showLoading();
-
-    if (!tab.url) {
+    if (tab.url) {
+        if (frame.src !== tab.url) {
+            frame.src = tab.url;
+        }
+        urlInput.value = tab.url;
+    } else {
         frame.src = "";
         urlInput.value = "";
-    } else {
-        frame.src = tab.url;
-        urlInput.value = tab.url;
     }
 
     updateTabTitleFromTab(tab);
     renderTabs();
 }
+
 
 function closeTab(id, event) {
     if (event) event.stopPropagation();
@@ -745,13 +746,13 @@ function updateTabTitleFromTab(tab) {
     }
 }
 
-/* Browser navigation */
 function loadBrowserURL() {
     const input = document.getElementById("browserURL");
     const iframe = document.getElementById("browserFrame");
 
     let url = input.value.trim();
 
+    // Normalize input
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
         url = "https://" + url;
     }
@@ -760,9 +761,16 @@ function loadBrowserURL() {
 
     console.log("Loading:", proxied);
 
+    // Load the page ONCE
     iframe.src = proxied;
-    updateTabTitleFromURL(proxied);
+
+    // Update tab title AFTER the page loads (prevents double-load)
+    iframe.onload = () => {
+        updateTabTitleFromURL(proxied);
+        hideLoading();
+    };
 }
+
 
 function browserBack() {
     try { document.getElementById("browserFrame").contentWindow.history.back(); } catch(e){}
@@ -775,8 +783,8 @@ function browserForward() {
 function browserReload() {
     const frame = document.getElementById("browserFrame");
     showLoading();
-    if (frame.src) frame.src = frame.src;
-}
+    if (frame.src) frame.contentWindow.location.reload();
+
 
 
 /* Wallpaper */
