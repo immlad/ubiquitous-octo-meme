@@ -514,12 +514,18 @@
 let zCounter = 10;
 let minimizedApps = {};
 
-function openApp(id) {
-    const win = document.getElementById(id);
-    win.style.display = "block";
-    bringToFront(win);
-    minimizedApps[id] = false;
-    setDockOpen(id, true);
+function openApp(appId) {
+    const app = document.getElementById(appId);
+    if (!app) {
+        console.error("App not found:", appId);
+        return;
+    }
+
+    app.style.display = "block";
+    app.classList.add("active-window");
+
+    // Bring to front
+    app.style.zIndex = Date.now();
 }
 
 function dockClick(id) {
