@@ -751,6 +751,9 @@ function updateTabTitleFromTab(tab) {
     }
 }
 
+const SEARCH_BACKEND = "http://localhost:8080/proxy/";
+const SEARCH_ENGINE = "https://lite.duckduckgo.com/lite/?q=";
+
 function loadBrowserURL() {
     const input = document.getElementById("browserURL");
     const iframe = document.getElementById("browserFrame");
@@ -758,15 +761,28 @@ function loadBrowserURL() {
     let url = input.value.trim();
     if (!url) return;
 
-    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        url = "https://" + url;
+    // Detect if user typed a URL or a search query
+    const looksLikeURL = url.includes(".") || url.startsWith("http");
+
+    if (looksLikeURL) {
+        // Normalize URL
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "https://" + url;
+        }
+
+        iframe.srcdoc = "";
+        iframe.src = SEARCH_BACKEND + url;
+
+        iframe.onload = () => updateTabTitleFromURL(SEARCH_BACKEND + url);
+    } else {
+        // Treat as search query
+        const searchURL = SEARCH_BACKEND + SEARCH_ENGINE + encodeURIComponent(url);
+
+        iframe.srcdoc = "";
+        iframe.src = searchURL;
+
+        iframe.onload = () => updateTabTitleFromURL(searchURL);
     }
-
-    iframe.srcdoc = "";
-    console.log("Loading:", SEARCH_BACKEND + url);
-    iframe.src = SEARCH_BACKEND + url;
-
-    iframe.onload = () => updateTabTitleFromURL(SEARCH_BACKEND + url);
 }
 
 function browserBack() {
