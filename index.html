@@ -506,7 +506,14 @@
     </div>
 </div>
 
-<script>
+<!-- Load OS window manager -->
+<script src="os.js"></script>
+
+<!-- Load browser logic -->
+<script src="browser.js"></script>
+
+</body>
+</html>
 // ----------------------
 // WINDOW MANAGER
 // ----------------------
@@ -849,12 +856,5 @@ function browserReload() {
 }
 
 window.addEventListener("load", () => createTab(null));
-    <!-- your other HTML ends above this -->
-
-    <!-- Load OS window manager -->
-    <script src="os.js"></script>
-
-    <!-- Load browser logic -->
-    <script src="browser.js"></script>
 </body>
 </html>
