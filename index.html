@@ -762,12 +762,10 @@ function loadBrowserURL() {
         url = "https://" + url;
     }
 
-    const proxied = SEARCH_BACKEND + url;
-
     iframe.srcdoc = "";
-    iframe.src = proxied;
+    iframe.src = SEARCH_BACKEND + url;
 
-    iframe.onload = () => updateTabTitleFromURL(proxied);
+    iframe.onload = () => updateTabTitleFromURL(SEARCH_BACKEND + url);
 }
 
 function browserBack() {
