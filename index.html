@@ -507,12 +507,9 @@
 </div>
 
 <script>
-/* ============================================================
-   WINDOW MANAGER (REQUIRED)
-   ============================================================ */
-
-let zCounter = 10;
-let minimizedApps = {};
+// ----------------------
+// WINDOW MANAGER
+// ----------------------
 
 function openApp(appId) {
     const app = document.getElementById(appId);
@@ -523,9 +520,55 @@ function openApp(appId) {
 
     app.style.display = "block";
     app.classList.add("active-window");
-
-    // Bring to front
     app.style.zIndex = Date.now();
+}
+
+function windowControl(event, appId, action) {
+    event.stopPropagation();
+    const app = document.getElementById(appId);
+
+    if (action === "close") {
+        app.style.display = "none";
+    }
+
+    if (action === "minimize") {
+        app.classList.add("minimized");
+    }
+
+    if (action === "fullscreen") {
+        app.classList.toggle("fullscreen");
+    }
+}
+
+// ----------------------
+// DRAGGING
+// ----------------------
+
+let dragData = null;
+
+function dragStart(e, appId) {
+    const app = document.getElementById(appId);
+    dragData = {
+        app,
+        offsetX: e.clientX - app.offsetLeft,
+        offsetY: e.clientY - app.offsetTop
+    };
+
+    document.addEventListener("mousemove", dragMove);
+    document.addEventListener("mouseup", dragEnd);
+}
+
+function dragMove(e) {
+    if (!dragData) return;
+
+    dragData.app.style.left = (e.clientX - dragData.offsetX) + "px";
+    dragData.app.style.top = (e.clientY - dragData.offsetY) + "px";
+}
+
+function dragEnd() {
+    dragData = null;
+    document.removeEventListener("mousemove", dragMove);
+    document.removeEventListener("mouseup", dragEnd);
 }
 
 function dockClick(id) {
@@ -806,6 +849,7 @@ function browserReload() {
 }
 
 window.addEventListener("load", () => createTab(null));
-</script>
+<script src="os.js"></script>
+<script src="browser.js"></script>
 </body>
 </html>
